@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<robot name="udo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name = "path" value = "waam_interpolation/model/meshes"/>
+  <xacro:property name = "base_height" value = "0.495"/>
+  <xacro:property name = "lowerarm_offset_z" value = "0.285"/>
+  <xacro:property name = "lowerarm_offset_x" value = "0.325"/>
+  <xacro:property name = "upperarm_offset_z" value = "0.87"/>
+  <xacro:property name = "wrist_offset_x" value = "0.41"/>
+  <xacro:property name = "wrist_offset_y" value = "0"/>
+  <xacro:property name = "wrist_offset_z" value = "0.127"/>
+  <xacro:property name = "wrist_02_offset_x" value = "0.42"/>
+  <xacro:property name = "welding_offset_y" value = "-0.02"/>
+  <xacro:property name = "welding_offset_z" value = "-0.131"/>
+ 
+  
+  <!-- MY LINK DEFINITION -->
+  
+  <link name="odom"/>
+  
+  
+  <link name="base">
+      <visual>
+          <geometry>
+              <mesh filename="package://${path}/base.dae"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+  </link>
+  
+  
+  <link name="revolve">
+      <visual>
+          <geometry>
+              <mesh filename="package://${path}/revolve.dae"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+  </link>
+  
+  
+  <link name="lower_arm">
+      <visual>
+          <geometry>
+              <mesh filename="package://${path}/lower_arm.dae"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+  </link>
+  
+  
+  <link name="upper_arm">
+      <visual>
+          <geometry>
+              <mesh filename="package://${path}/upper_arm.dae"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+  </link>
+  
+  
+  <link name="wrist">
+      <visual>
+          <geometry>
+              <mesh filename="package://${path}/wrist.dae"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+  </link>
+  
+  <link name="wrist_02">
+        <visual>
+            <geometry>
+                <mesh filename="package://${path}/wrist_02.dae"/>
+            </geometry>
+        </visual>
+  </link>
+
+   <link name="welding">
+        <visual>
+            <geometry>
+                <mesh filename="package://${path}/welding.dae"/>
+            </geometry>
+        </visual>
+  </link>
+  
+
+  <!-- MY JOINT DEFINITION -->
+  
+  
+  <joint name="fixed_joint" type="fixed">
+        <parent link="odom"/>
+        <child link="base"/>
+  </joint>
+  
+  <joint name="revolve_base" type="continuous">
+        <parent link="base"/>
+        <child link="revolve"/>
+        <origin xyz="0.0 0.0 ${base_height}" rpy="0.0 0.0 0.0"/>
+        <axis xyz="0 0 1"/>
+  </joint>
+  
+  <joint name="lowerarm_revolve" type="revolute">
+        <parent link="revolve"/>
+        <child link="lower_arm"/>
+        <origin xyz="${lowerarm_offset_x} 0.0 ${lowerarm_offset_z}" rpy="0.0 0.0 0.0"/>
+        <limit effort="1000.0" lower="-0.5" upper="1.0" velocity="0.2"/>
+        <axis xyz="0 1 0"/>
+  </joint>
+ 
+  <joint name="upperarm_lowerarm" type="revolute">
+        <parent link="lower_arm"/>
+        <child link="upper_arm"/>
+        <origin xyz="0.0 0.0 ${upperarm_offset_z}" rpy="0.0 0.0 0.0"/>
+        <limit effort="1000.0" lower="-0.5" upper="0.5" velocity="0.2"/>
+        <axis xyz="0 1 0"/>
+  </joint>
+  
+  <joint name="wrist_lowerarm" type="continuous">
+        <parent link="upper_arm"/>
+        <child link="wrist"/>
+        <origin xyz="${wrist_offset_x} ${wrist_offset_y} ${wrist_offset_z}" rpy="0.0 0.0 0.0"/>
+        <axis xyz="1 0 0"/>
+  </joint>
+
+  <joint name="wrist02_wrist" type="revolute">
+        <parent link="wrist"/>
+        <child link="wrist_02"/>
+        <origin xyz="${wrist_02_offset_x} 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <limit effort="1000.0" lower="-1.5" upper="1.5" velocity="0.2"/>
+        <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="welding_wrist02" type="continuous">
+        <parent link="wrist_02"/>
+        <child link="welding"/>
+        <origin xyz="0.0 ${welding_offset_y} ${welding_offset_z}" rpy="0.0 0.0 0.0"/>
+        <axis xyz="0 0 1"/>
+  </joint>
+  
+</robot>
